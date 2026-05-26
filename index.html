@@ -64,7 +64,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            overscroll-behavior-y: none;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
@@ -74,6 +75,7 @@
             background-attachment: fixed;
             color: #ffffff;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         ::-webkit-scrollbar {
@@ -95,11 +97,12 @@
         }
 
         .glass-card {
-            background: rgba(28, 28, 30, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(28, 28, 30, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.35);
+            contain: layout paint style;
         }
 
         .tab-content {
@@ -114,7 +117,8 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            animation: fadeIn 0.25s ease-out;
+            overscroll-behavior: contain;
+            animation: fadeIn 0.2s ease-out;
         }
 
         /* Print Style for QR Code */
@@ -193,23 +197,25 @@
         /* Unified Bottom Navigation Active State */
         .nav-item {
             color: #8e8e93;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: color 0.25s ease;
+            touch-action: manipulation;
         }
 
         .nav-item .icon-wrapper {
             background: transparent;
             box-shadow: none;
             transform: translateY(0) scale(1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s ease, box-shadow 0.25s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            will-change: transform;
         }
 
         .nav-item svg,
         .nav-item i {
             color: #8e8e93;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: color 0.25s ease;
         }
 
         .nav-item.active {
@@ -218,7 +224,7 @@
 
         .nav-item.active .icon-wrapper {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
             transform: translateY(-8px) scale(1.1);
         }
 
@@ -242,28 +248,16 @@
 
         .animate-card {
             opacity: 0;
-            animation: cardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
         }
 
-        /* Smooth Transition for Theme Switches */
+        /* Smooth Transition for Theme Switches — scoped only to theme-sensitive elements */
         body,
         .glass-card,
         input,
-        textarea,
-        button,
-        svg,
-        i,
-        span,
-        h1,
-        h2,
-        h3,
-        h4,
-        th,
-        td,
-        aside,
-        nav,
-        div {
-            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+        textarea {
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
         }
 
         /* Light Theme Styles */
@@ -275,11 +269,11 @@
         }
 
         html.light .glass-card {
-            background: rgba(255, 255, 255, 0.65) !important;
+            background: rgba(255, 255, 255, 0.70) !important;
             border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
+            box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.06) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
         }
 
         html.light .text-white {
@@ -386,7 +380,8 @@
             z-index: 45;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
+            will-change: opacity;
         }
 
         .settings-panel-overlay.active {
@@ -403,14 +398,16 @@
             max-width: 480px;
             height: 100%;
             z-index: 50;
-            transform: translateX(100%);
+            transform: translate3d(100%, 0, 0);
             opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+            box-shadow: -8px 0 24px rgba(0, 0, 0, 0.35);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
         .settings-panel.active {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0);
             opacity: 1;
         }
 
@@ -430,37 +427,39 @@
         .water-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(85px);
-            opacity: 0.15;
-            will-change: transform, opacity;
+            filter: blur(70px);
+            opacity: 0.13;
+            will-change: transform;
             z-index: 2;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
         }
 
         .water-orb-1 {
-            width: 400px;
-            height: 400px;
+            width: 350px;
+            height: 350px;
             background: #0077b6;
             top: -100px;
             left: -100px;
-            animation: floatOrb 25s ease-in-out infinite alternate;
+            animation: floatOrb 28s ease-in-out infinite alternate;
         }
 
         .water-orb-2 {
-            width: 500px;
-            height: 500px;
+            width: 450px;
+            height: 450px;
             background: #00b4d8;
             bottom: -150px;
             right: -150px;
-            animation: floatOrb 30s ease-in-out infinite alternate-reverse;
+            animation: floatOrb 34s ease-in-out infinite alternate-reverse;
         }
 
         .water-orb-3 {
-            width: 300px;
-            height: 300px;
+            width: 280px;
+            height: 280px;
             background: #0096c7;
             top: 40%;
             left: 50%;
-            animation: floatOrb 20s ease-in-out infinite alternate;
+            animation: floatOrb 22s ease-in-out infinite alternate;
         }
 
         @keyframes floatOrb {
@@ -3472,50 +3471,51 @@
         // ==========================================
         // 4. DASHBOARD LOGIC
         // ==========================================
+        // Cached DOM refs for updateDashboard — set once at startup
+        let _elTotalDorms, _elTodayScans, _elLimitReached, _elRecentActivity;
+
         function updateDashboard() {
             const txs = Storage.getTx();
             const dorms = Storage.getDorms();
-            const now = Date.now();
             const startOfDay = new Date().setHours(0, 0, 0, 0);
 
-            // Basic Stats
-            document.getElementById('stat-total-dorms').innerText = dorms.length;
+            // Use cached refs
+            if (!_elTotalDorms) {
+                _elTotalDorms = document.getElementById('stat-total-dorms');
+                _elTodayScans = document.getElementById('stat-today-scans');
+                _elLimitReached = document.getElementById('stat-limit-reached');
+                _elRecentActivity = document.getElementById('recent-activity-list');
+            }
 
-            const todayScans = txs.filter(t => t.timestamp >= startOfDay).length;
-            document.getElementById('stat-today-scans').innerText = todayScans;
+            _elTotalDorms.textContent = dorms.length;
 
-            const limitReached = txs.filter(t => t.timestamp >= startOfDay && t.status === 'REJECTED').length;
-            document.getElementById('stat-limit-reached').innerText = limitReached;
+            const startTs = startOfDay;
+            let todayScans = 0, limitReached = 0;
+            for (let i = 0; i < txs.length; i++) {
+                const t = txs[i];
+                if (t.timestamp >= startTs) {
+                    todayScans++;
+                    if (t.status === 'REJECTED') limitReached++;
+                }
+            }
+            _elTodayScans.textContent = todayScans;
+            _elLimitReached.textContent = limitReached;
 
             // Recent Activity (Top 5)
-            const recentContainer = document.getElementById('recent-activity-list');
             const recentTxs = txs.slice(0, 5);
 
             if (recentTxs.length === 0) {
-                recentContainer.innerHTML = '<div class="text-center py-8 text-apple-gray text-sm">Belum ada aktivitas.</div>';
+                _elRecentActivity.innerHTML = '<div class="text-center py-8 text-apple-gray text-sm">Belum ada aktivitas.</div>';
             } else {
-                recentContainer.innerHTML = recentTxs.map(tx => {
+                const html = recentTxs.map(tx => {
                     const isSuccess = tx.status === 'SUCCESS';
                     const icon = isSuccess ? 'check' : 'x';
                     const color = isSuccess ? 'green' : 'red';
                     const timeStr = new Date(tx.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-                    return `
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-${color}-500/20 text-apple-${color} rounded-lg">
-                                <i data-lucide="${icon}" class="w-4 h-4"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-white uppercase text-sm">${tx.code}</p>
-                                <p class="text-xs text-apple-gray">${isSuccess ? 'Pengambilan Berhasil' : 'Limit Tercapai'}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-white">${timeStr}</p>
-                        </div>
-                    </div>`;
+                    return `<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"><div class="flex items-center gap-3"><div class="p-2 bg-${color}-500/20 text-apple-${color} rounded-lg"><i data-lucide="${icon}" class="w-4 h-4"></i></div><div><p class="font-bold text-white uppercase text-sm">${tx.code}</p><p class="text-xs text-apple-gray">${isSuccess ? 'Pengambilan Berhasil' : 'Limit Tercapai'}</p></div></div><div class="text-right"><p class="text-sm font-medium text-white">${timeStr}</p></div></div>`;
                 }).join('');
+                _elRecentActivity.innerHTML = html;
                 lucide.createIcons();
             }
         }
@@ -3790,19 +3790,18 @@
                 if (!dormCode) throw new Error("Format tidak valid");
 
 
+                // Cached reader element for scanner feedback
+                const _readerEl = document.getElementById('reader');
+
                 // Check Operational Hours
                 if (!isWithinOperationalHours()) {
                     AudioFX.error();
-                    Storage.addTx({
-                        code: dormCode,
-                        timestamp: Date.now(),
-                        status: 'REJECTED'
-                    });
-                    showToast('Di luar jam operasional', `Transaksi ditolak. Jam operasional aktif: ${currentSettings.startHour} - ${currentSettings.endHour}`, 'error');
-
-                    const viewport = document.querySelector('#reader');
-                    viewport.style.boxShadow = 'inset 0 0 50px rgba(255, 69, 58, 0.5)';
-                    setTimeout(() => viewport.style.boxShadow = 'none', 1000);
+                    Storage.addTx({ code: dormCode, timestamp: Date.now(), status: 'REJECTED' });
+                    showToast('Di luar jam operasional', `Transaksi ditolak. Jam operasional: ${currentSettings.startHour} - ${currentSettings.endHour}`, 'error');
+                    if (_readerEl) {
+                        _readerEl.style.boxShadow = 'inset 0 0 40px rgba(255,69,58,0.45)';
+                        setTimeout(() => { _readerEl.style.boxShadow = 'none'; }, 900);
+                    }
                     return;
                 }
 
@@ -3813,31 +3812,21 @@
                 if (currentUsage < limit) {
                     // SUCCESS
                     AudioFX.success();
-                    Storage.addTx({
-                        code: dormCode,
-                        timestamp: Date.now(),
-                        status: 'SUCCESS'
-                    });
-                    showToast('Pembelian Berhasil', `Asrama ${dormCode} - Pengambilan ke-${currentUsage + 1} hari ini.`, 'success');
-
-                    // Visual feedback
-                    const viewport = document.querySelector('#reader');
-                    viewport.style.boxShadow = 'inset 0 0 50px rgba(48, 209, 88, 0.5)';
-                    setTimeout(() => viewport.style.boxShadow = 'none', 1000);
-
+                    Storage.addTx({ code: dormCode, timestamp: Date.now(), status: 'SUCCESS' });
+                    showToast('Pembelian Berhasil', `Asrama ${dormCode} — Pengambilan ke-${currentUsage + 1} hari ini.`, 'success');
+                    if (_readerEl) {
+                        _readerEl.style.boxShadow = 'inset 0 0 40px rgba(48,209,88,0.45)';
+                        setTimeout(() => { _readerEl.style.boxShadow = 'none'; }, 900);
+                    }
                 } else {
                     // REJECTED
                     AudioFX.error();
-                    Storage.addTx({
-                        code: dormCode,
-                        timestamp: Date.now(),
-                        status: 'REJECTED'
-                    });
+                    Storage.addTx({ code: dormCode, timestamp: Date.now(), status: 'REJECTED' });
                     showToast('Limit Harian Tercapai!', `Asrama ${dormCode} sudah mengambil ${limit}x dalam 24 jam terakhir.`, 'error');
-
-                    const viewport = document.querySelector('#reader');
-                    viewport.style.boxShadow = 'inset 0 0 50px rgba(255, 69, 58, 0.5)';
-                    setTimeout(() => viewport.style.boxShadow = 'none', 1000);
+                    if (_readerEl) {
+                        _readerEl.style.boxShadow = 'inset 0 0 40px rgba(255,69,58,0.45)';
+                        setTimeout(() => { _readerEl.style.boxShadow = 'none'; }, 900);
+                    }
                 }
 
             } catch (e) {
@@ -3974,33 +3963,21 @@
 
             emptyState.classList.add('hidden');
 
-            tbody.innerHTML = filteredTxs.map(tx => {
+            // Cap render rows to 200 max to avoid DOM bloat on large datasets
+            const renderTxs = filteredTxs.length > 200 ? filteredTxs.slice(0, 200) : filteredTxs;
+
+            const rows = [];
+            for (let i = 0; i < renderTxs.length; i++) {
+                const tx = renderTxs[i];
                 const date = new Date(tx.timestamp);
                 const dateStr = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                 const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
                 const isSuccess = tx.status === 'SUCCESS';
                 const badgeClass = isSuccess ? 'bg-green-500/10 text-apple-green border-green-500/20' : 'bg-red-500/10 text-apple-red border-red-500/20';
                 const statusText = isSuccess ? 'Sukses' : 'Ditolak';
-
-                return `
-                <tr class="hover:bg-white/5 transition-colors group">
-                    <td class="py-4 px-6 border-b border-white/5">
-                        <span class="font-bold text-white uppercase text-base">${tx.code}</span>
-                    </td>
-                    <td class="py-4 px-6 border-b border-white/5">
-                        <div class="flex flex-col">
-                            <span class="text-white text-sm">${dateStr}</span>
-                            <span class="text-apple-gray text-xs">${timeStr}</span>
-                        </div>
-                    </td>
-                    <td class="py-4 px-6 border-b border-white/5">
-                        <span class="px-3 py-1 text-xs font-semibold rounded-full border ${badgeClass}">
-                            ${statusText}
-                        </span>
-                    </td>
-                </tr>`;
-            }).join('');
+                rows.push(`<tr class="hover:bg-white/5 transition-colors"><td class="py-4 px-6 border-b border-white/5"><span class="font-bold text-white uppercase text-base">${tx.code}</span></td><td class="py-4 px-6 border-b border-white/5"><div class="flex flex-col"><span class="text-white text-sm">${dateStr}</span><span class="text-apple-gray text-xs">${timeStr}</span></div></td><td class="py-4 px-6 border-b border-white/5"><span class="px-3 py-1 text-xs font-semibold rounded-full border ${badgeClass}">${statusText}</span></td></tr>`);
+            }
+            tbody.innerHTML = rows.join('');
         }
 
         function setHistoryFilter(dormCode) {
