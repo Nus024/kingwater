@@ -3,8 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WaterKing QR System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>WaterKing-MU</title>
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -199,6 +203,9 @@
             color: #8e8e93;
             transition: color 0.25s ease;
             touch-action: manipulation;
+            min-width: 52px;
+            flex: 1;
+            box-sizing: border-box;
         }
 
         .nav-item .icon-wrapper {
@@ -210,6 +217,9 @@
             align-items: center;
             justify-content: center;
             will-change: transform;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
         }
 
         .nav-item svg,
@@ -224,8 +234,9 @@
 
         .nav-item.active .icon-wrapper {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
-            box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
-            transform: translateY(-8px) scale(1.1);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+            /* Reduced lift so active item stays inside the nav container */
+            transform: translateY(-5px) scale(1.05);
         }
 
         .nav-item.active svg,
@@ -661,40 +672,41 @@
     <div id="app-layout" class="flex w-full h-full overflow-hidden hidden transition-opacity duration-500">
 
         <!-- Mobile Bottom Navigation (Hidden on Desktop) -->
-        <nav
-            class="md:hidden fixed bottom-6 left-4 right-4 glass-card rounded-3xl border border-white/10 z-40 shadow-2xl backdrop-blur-2xl bg-black/40 pb-0">
-            <div class="flex justify-around items-center h-[70px] px-2 relative">
+        <nav id="bottom-nav"
+            class="md:hidden fixed bottom-4 left-3 right-3 glass-card rounded-[26px] border border-white/10 z-40 shadow-xl"
+            style="box-sizing:border-box;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px);">
+            <div class="flex items-center" style="height:62px;padding:0 4px;">
                 <button onclick="switchTab('dashboard')"
-                    class="nav-btn nav-item flex flex-col items-center p-2 text-apple-gray active transition-colors"
-                    data-target="dashboard">
-                    <div class="icon-wrapper p-2.5 rounded-full transition-all duration-300">
-                        <i data-lucide="home" class="w-6 h-6"></i>
+                    class="nav-btn nav-item flex flex-col items-center justify-center active"
+                    data-target="dashboard" style="gap:2px;padding:4px 0;">
+                    <div class="icon-wrapper">
+                        <i data-lucide="home" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium mt-1">Beranda</span>
+                    <span style="font-size:10px;font-weight:500;white-space:nowrap;line-height:1;">Beranda</span>
                 </button>
                 <button onclick="switchTab('generate')"
-                    class="nav-btn nav-item flex flex-col items-center p-2 text-apple-gray transition-colors"
-                    data-target="generate">
-                    <div class="icon-wrapper p-2.5 rounded-full transition-all duration-300">
-                        <i data-lucide="qr-code" class="w-6 h-6"></i>
+                    class="nav-btn nav-item flex flex-col items-center justify-center"
+                    data-target="generate" style="gap:2px;padding:4px 0;">
+                    <div class="icon-wrapper">
+                        <i data-lucide="qr-code" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium mt-1">Buat QR</span>
+                    <span style="font-size:10px;font-weight:500;white-space:nowrap;line-height:1;">Buat QR</span>
                 </button>
                 <button onclick="switchTab('scan')"
-                    class="nav-btn nav-item flex flex-col items-center p-2 text-apple-gray transition-colors"
-                    data-target="scan">
-                    <div class="icon-wrapper p-2.5 rounded-full transition-all duration-300">
-                        <i data-lucide="scan" class="w-6 h-6"></i>
+                    class="nav-btn nav-item flex flex-col items-center justify-center"
+                    data-target="scan" style="gap:2px;padding:4px 0;">
+                    <div class="icon-wrapper">
+                        <i data-lucide="scan" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium mt-1">Scan</span>
+                    <span style="font-size:10px;font-weight:500;white-space:nowrap;line-height:1;">Scan</span>
                 </button>
                 <button onclick="switchTab('history')"
-                    class="nav-btn nav-item flex flex-col items-center p-2 text-apple-gray transition-colors"
-                    data-target="history">
-                    <div class="icon-wrapper p-2.5 rounded-full transition-all duration-300">
-                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    class="nav-btn nav-item flex flex-col items-center justify-center"
+                    data-target="history" style="gap:2px;padding:4px 0;">
+                    <div class="icon-wrapper">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[10px] font-medium mt-1">Histori</span>
+                    <span style="font-size:10px;font-weight:500;white-space:nowrap;line-height:1;">Histori</span>
                 </button>
             </div>
         </nav>
@@ -3997,6 +4009,17 @@
         // ==========================================
 
         // ---- AUTO FULLSCREEN MODULE ----
+
+        // Apply dynamic viewport height fix (100dvh) immediately for mobile
+        (function applyDvhFix() {
+            const setVh = () => {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            };
+            setVh();
+            window.addEventListener('resize', setVh, { passive: true });
+        })();
+
         async function enterFullscreen() {
             try {
                 if (document.fullscreenElement) return;
@@ -4013,12 +4036,19 @@
                     showToast('Mode Layar Penuh', 'Mode layar penuh aktif', 'success');
                 }, 300);
             } catch (err) {
-                console.warn('Fullscreen gagal:', err);
+                // Mobile browsers often reject requestFullscreen — this is expected.
+                // The app still fills the viewport via dvh + scrollTo trick.
+                console.warn('Fullscreen API tidak didukung, menggunakan viewport mode:', err.message || err);
             }
         }
 
         function initFullscreenTrigger() {
             const trigger = () => {
+                // Collapse mobile address bar by scrolling 1px then back
+                if (window.scrollY === 0) {
+                    window.scrollTo(0, 1);
+                    setTimeout(() => window.scrollTo(0, 0), 50);
+                }
                 enterFullscreen();
                 document.removeEventListener('click', trigger);
                 document.removeEventListener('touchstart', trigger);
